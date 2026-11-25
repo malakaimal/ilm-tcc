@@ -91,7 +91,7 @@ function doPost(e) {
  */
 function sendAdmissionConfirmationEmail_(values) {
   const recipient = clean_(values["Email"], 180);
-  if (!recipient || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(recipient)) {
+  if (!recipient || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient)) {
     throw new Error("A valid student email address is required to send the confirmation.");
   }
 
@@ -117,7 +117,7 @@ function sendAdmissionConfirmationEmail_(values) {
     "Admissions Team",
     "ILM The Contest Center",
     "ilmthecontestcenter@gmail.com"
-  ].join("\\n");
+  ].join("\n");
 
   const html = [
     '<div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;color:#24324a;line-height:1.6">',
@@ -293,7 +293,7 @@ function lookupExamSlip_(params, callback) {
       }
       const get = function(name) { const j = headers.indexOf(name); return j < 0 ? "" : row[j]; };
       const examLink = get("Exam Link");
-      if (examLink && !/^https?:\\/\\//i.test(examLink)) {
+      if (examLink && !/^https?:\/\//i.test(examLink)) {
         throw new Error("The examination link in the sheet must begin with https:// or http://.");
       }
       return outputResponse_({success:true,slip:{
