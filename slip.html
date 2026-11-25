@@ -2,25 +2,100 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Look up published ILM student results using your Application ID.">
-<title>Student Results | ILM The Contest Center</title>
-<link rel="stylesheet" href="style.css?v=ilm-results-application-id-20261122">
+<meta name="description" content="Find your ILM registration confirmation slip or published examination result slip.">
+<title>Download Slips | ILM The Contest Center</title>
+<link rel="stylesheet" href="style.css?v=ilm-combined-slips-20261125">
+<style>
+.slip-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 22px}
+.slip-tab{border:1px solid #d8e1eb;background:#fff;color:#183653;border-radius:9px;padding:12px 18px;font:inherit;font-weight:700;cursor:pointer}
+.slip-tab[aria-selected="true"]{background:#0c2b4c;color:#fff;border-color:#0c2b4c}
+.slip-panel[hidden]{display:none!important}
+.registration-paper{background:#fff;color:#172b46;border:1px solid #dbe3ee;border-radius:14px;padding:28px;max-width:760px;margin:24px auto;box-shadow:0 12px 34px rgba(12,35,64,.08)}
+.registration-head{display:flex;justify-content:space-between;gap:18px;align-items:center;border-bottom:3px solid #d8b45d;padding-bottom:18px}
+.registration-brand{font-weight:800;color:#102b55;font-size:22px}.registration-kicker{color:#9a7428;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:12px}
+.registration-id{background:#f3f6fa;border:1px solid #dbe3ee;padding:12px;border-radius:8px;font-weight:800}
+.registration-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0}
+.registration-field{padding:11px;border-bottom:1px solid #e6ebf2;min-width:0}.registration-field small{display:block;color:#68778c;margin-bottom:4px}.registration-field strong{overflow-wrap:anywhere}
+.registration-foot{border-top:1px solid #e6ebf2;padding-top:15px;color:#617087;font-size:13px}
+@media(max-width:560px){.registration-grid{grid-template-columns:1fr}.registration-head{align-items:flex-start;flex-direction:column}}
+@media print{body{background:#fff!important}.site-header,.site-footer,.page-hero,.slip-tabs,.lookup-card,.no-print{display:none!important}.registration-paper{box-shadow:none;border:1px solid #aaa;margin:0 auto;max-width:none}.section{padding:0!important}.container{max-width:none!important;padding:0!important}}
+</style>
 </head>
 <body class="page-results">
 <header id="site-header"></header>
 <main>
-<section class="page-hero"><div class="container"><span class="eyebrow">ILM The Contest Center</span><h1>Downlaod Your Slip</h1><p>Check your published examination slips.</p></div></section>
-<section class="section section-soft"><div class="container"><div class="form-card">
-<div class="section-heading"><span class="tag">Student result portal</span><h2>Find Your Slip</h2><p>Enter the Application ID provided after registration. Only slip Published by ILM will be displayed.</p></div>
-<form id="resultLookup"><div class="field"><label for="applicationId">Application ID</label><input id="applicationId" name="applicationId" type="text" required maxlength="50" placeholder="Example: ILM2026XXX or ILM-2026-XXX" autocomplete="off"><small class="muted">Enter your Application ID from your ILM registration confirmation. Do not enter a Form Number.</small></div><button class="btn btn-blue" type="submit" id="resultButton">Search Slip</button></form>
+<section class="page-hero"><div class="container"><span class="eyebrow">ILM The Contest Center</span><h1>Download Your ILM Slip</h1><p>Access your registration confirmation or published examination slip in one place.</p></div></section>
+<section class="section section-soft"><div class="container">
+<div class="form-card">
+<div class="section-heading"><span class="tag">Student Services</span><h2>Choose Slip Type</h2><p>Select the document you want to retrieve.</p></div>
+<div class="slip-tabs" role="tablist" aria-label="Slip type">
+<button class="slip-tab" id="registrationTab" type="button" role="tab" aria-selected="true" aria-controls="registrationPanel">Registration Slip</button>
+<button class="slip-tab" id="examinationTab" type="button" role="tab" aria-selected="false" aria-controls="examinationPanel">Examination Slip / DMC</button>
+</div>
+<section class="slip-panel" id="registrationPanel" role="tabpanel" aria-labelledby="registrationTab">
+<div class="section-heading"><h2>Find Registration Slip</h2><p>Enter your Application ID and the email address used during registration. Both details are required for privacy.</p></div>
+<form id="registrationLookup">
+<div class="field"><label for="regApplicationId">Application ID</label><input id="regApplicationId" required maxlength="50" placeholder="Example: ILM2026001" autocomplete="off"></div>
+<div class="field"><label for="regEmail">Registered Email Address</label><input id="regEmail" type="email" required maxlength="180" placeholder="Enter your registration email" autocomplete="email"></div>
+<button class="btn btn-blue" id="registrationButton" type="submit">Find Registration Slip</button>
+</form>
+<div id="registrationMessage" class="form-message" role="status" aria-live="polite"></div>
+<div id="registrationOutput"></div>
+</section>
+<section class="slip-panel" id="examinationPanel" role="tabpanel" aria-labelledby="examinationTab" hidden>
+<div class="section-heading"><h2>Find Examination Slip / DMC</h2><p>Enter the Application ID provided by ILM. Only examination slips or results published by the ILM administration team will appear.</p></div>
+<form id="resultLookup">
+<div class="field"><label for="applicationId">Application ID</label><input id="applicationId" name="applicationId" type="text" required maxlength="50" placeholder="Example: ILM2026XXX" autocomplete="off"><small class="muted">Use your ILM Application ID, not a Form Number.</small></div>
+<button class="btn btn-blue" type="submit" id="resultButton">Search Examination Slip</button>
+</form>
 <div id="resultMessage" class="form-message" role="status" aria-live="polite"></div>
 <div id="resultOutput" class="spacer-top"></div>
-</div></div></section>
-<section class="section"><div class="container"><div class="section-heading"><h2>Official Slip Information</h2><p>Slips become visible only after the ILM administration team publishes them. If you need help, contact <a href="mailto:ilmthecontestcenter@gmail.com">ilmthecontestcenter@gmail.com</a>.</p></div></div>
-<button class="btn btn-blue"><a href="mailto:ilmthecontestcenter@gmail.com">Need help?</a></button></section>
+</section>
+</div>
+</div></section>
+<section class="section"><div class="container"><div class="section-heading"><h2>Need assistance?</h2><p>If your slip is not available or your details are not recognised, contact <a href="mailto:ilmthecontestcenter@gmail.com">ilmthecontestcenter@gmail.com</a>.</p></div></div></section>
 </main>
 <footer id="site-footer"></footer>
 <script src="script.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" referrerpolicy="no-referrer"></script>
 <script src="results.js?v=ilm-dmc-pdf-20261123"></script>
+<script>
+(function(){
+const regTab=document.getElementById("registrationTab"), examTab=document.getElementById("examinationTab");
+const regPanel=document.getElementById("registrationPanel"), examPanel=document.getElementById("examinationPanel");
+function selectTab(which){
+const registration=which==="registration";
+regTab.setAttribute("aria-selected",String(registration));examTab.setAttribute("aria-selected",String(!registration));
+regPanel.hidden=!registration;examPanel.hidden=registration;
+}
+regTab.addEventListener("click",()=>selectTab("registration"));
+examTab.addEventListener("click",()=>selectTab("examination"));
+const API="https://script.google.com/macros/s/AKfycbwGvXpTiN2DBwio0NdnSqAgQBdG1SFV3ISkrFet-mO86UUPUXIyfC1AlmrOdxPGaviF/exec";
+const form=document.getElementById("registrationLookup"),message=document.getElementById("registrationMessage"),output=document.getElementById("registrationOutput"),button=document.getElementById("registrationButton");
+function showMessage(t,type){message.textContent=t;message.className="form-message "+(type||"");message.style.display="block";}
+function escapeText(v){return String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function renderRegistrationSlip(s){
+const fields=[["Student Name",s.studentName],["Father / Guardian",s.fatherName],["Date of Birth",s.dateOfBirth],["Class",s.className],["School",s.school],["Programme",s.programme],["Area",s.area],["Application Date",s.applicationDate],["Application Status",s.status]];
+output.innerHTML='<article class="registration-paper" id="registrationSlip"><div class="registration-head"><div><div class="registration-kicker">Official Registration Confirmation</div><div class="registration-brand">ILM THE CONTEST CENTER</div><div>Shangla, Pakistan</div></div><div class="registration-id">Application ID<br>'+escapeText(s.applicationId)+'</div></div><div class="registration-grid">'+fields.map(f=>'<div class="registration-field"><small>'+escapeText(f[0])+'</small><strong>'+escapeText(f[1]||"Not provided")+'</strong></div>').join("")+'</div><div class="registration-foot">Keep this slip for your records. Application status and payment are subject to verification by ILM The Contest Center.<br>Contact: ilmthecontestcenter@gmail.com</div><div class="no-print" style="margin-top:20px"><button class="btn btn-blue" type="button" onclick="window.print()">Download / Print PDF</button></div></article>';
+}
+let requestNumber=0;
+window.ilmRegistrationSlipCallback=function(data,requestId){
+if(requestId!==requestNumber)return;
+button.disabled=false;button.textContent="Find Registration Slip";
+if(!data||!data.success){showMessage(data&&data.message?data.message:"No matching registration was found. Check your Application ID and registered email.","error");return;}
+showMessage("Registration found. Your slip is ready.","success");renderRegistrationSlip(data.slip);
+};
+form.addEventListener("submit",e=>{
+e.preventDefault();output.replaceChildren();showMessage("Searching registration records...");button.disabled=true;button.textContent="Searching...";
+const old=document.getElementById("ilmRegistrationLookupScript");if(old)old.remove();
+const id=++requestNumber;
+const src=document.createElement("script");src.id="ilmRegistrationLookupScript";
+const callback="ilmRegistrationSlipCallback";
+src.onerror=()=>{if(id!==requestNumber)return;button.disabled=false;button.textContent="Find Registration Slip";showMessage("Could not connect to the registration service. Please try again.","error");};
+const url=new URL(API);url.searchParams.set("action","registration-slip");url.searchParams.set("applicationId",document.getElementById("regApplicationId").value.trim());url.searchParams.set("email",document.getElementById("regEmail").value.trim());url.searchParams.set("prefix",callback);url.searchParams.set("requestId",String(id));url.searchParams.set("_",String(Date.now()));
+src.src=url.toString();document.body.appendChild(src);
+window.setTimeout(()=>{if(id===requestNumber&&button.disabled){button.disabled=false;button.textContent="Find Registration Slip";showMessage("The registration service is taking too long. Please try again.","error");}},20000);
+});
+})();
+</script>
 </body></html>
