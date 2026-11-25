@@ -18,6 +18,10 @@ const RESULT_HEADERS = [
   "Application ID","Student Name","Class","Programme","Total Marks","Obtained Marks",
   "Percentage","Position","Result Status","Published"
 ];
+const EXAM_SLIP_HEADERS = [
+  "Application ID","Registered Email","Student Name","Roll Number","Batch","Test Date","Test Time",
+  "Total MCQs","Total Marks","Exam Duration","Exam Link","Published"
+];
 
 function doPost(e) {
   try {
@@ -129,7 +133,7 @@ function sendAdmissionConfirmationEmail_(values) {
     '<tr><td style="padding:9px;border:1px solid #e5eaf1"><b>Class</b></td><td style="padding:9px;border:1px solid #e5eaf1">' + escapeHtml_(grade) + '</td></tr>',
     '<tr><td style="padding:9px;border:1px solid #e5eaf1"><b>Status</b></td><td style="padding:9px;border:1px solid #e5eaf1">Under Review</td></tr>',
     '</table>',
-    '<p>Please keep your Application ID for future communication. You can retrieve and print your registration slip at <a href="https://malakaimal.github.io/ilm-tcc/slip.html">ILM Registration Slip Download</a> using your Application ID and registered email address.</p>',
+    '<p>Please keep your Application ID and registered email address. When ILM publishes examination roll numbers, you can retrieve your examination slip from the <a href="https://malakaimal.github.io/ilm-tcc/slip.html">ILM Examination Roll Number Slip Portal</a>.</p>',
     '<p>Regards,<br><b>Admissions Team</b><br>ILM The Contest Center<br>ilmthecontestcenter@gmail.com</p>',
     '</div></div>'
   ].join("");
@@ -162,6 +166,10 @@ function doGet(e) {
   // Google Apps Script's documented JSONP convention is "prefix".
   // Accept "callback" too, for compatibility with older website versions.
   const callback = String(params.prefix || params.callback || "").trim();
+
+  if (params.action === "exam-slip") {
+    return lookupExamSlip_(params, callback);
+  }
 
   if (params.action === "registration-slip") {
     return lookupRegistrationSlip_(params, callback);
@@ -249,6 +257,59 @@ function lookupRegistrationSlip_(params, callback) {
       }}, callback);
     }
     return outputResponse_({success:false,message:"No matching registration was found. Check your Application ID and registered email."}, callback);
+  } catch(err) {
+    return outputResponse_({success:false,message:String(err.message || err)}, callback);
+  }
+}
+
+
+/** Look up a published examination roll-number slip by Application ID and registered email. */
+function lookupExamSlip_(params, callback) {
+  const applicationId = clean_(params.applicationId || "", 50).toUpperCase();
+  const email = clean_(params.email || "", 180).toLowerCase();
+  if (!applicationId || !email) {
+    return outputResponse_({success:false,message:"Enter your Application ID and registered email address."}, callback);
+  }
+  try {
+    const ss = SpreadsheetApp.openById(ILM_SPREADSHEET_ID);
+    const sheet = ss.getSheetByName("Examination Slips");
+    if (!sheet || sheet.getLastRow() < 2) {
+      return outputResponse_({success:false,message:"Examination roll-number slips have not been published yet."}, callback);
+    }
+    const rows = sheet.getDataRange().getDisplayValues();
+    const headers = rows[0].map(function(h){ return String(h).trim(); });
+    const idCol = headers.indexOf("Application ID");
+    const emailCol = headers.indexOf("Registered Email");
+    const publishedCol = headers.indexOf("Published");
+    if (idCol < 0 || emailCol < 0 || publishedCol < 0) {
+      throw new Error("Examination Slips sheet must include Application ID, Registered Email and Published columns.");
+    }
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i];
+      if (String(row[idCol]).trim().toUpperCase() !== applicationId) continue;
+      if (String(row[emailCol]).trim().toLowerCase() !== email) continue;
+      if (!/^(yes|true|published)$/i.test(String(row[publishedCol]).trim())) {
+        return outputResponse_({success:false,message:"Your examination slip has not been published yet. Please check again later."}, callback);
+      }
+      const get = function(name) { const j = headers.indexOf(name); return j < 0 ? "" : row[j]; };
+      const examLink = get("Exam Link");
+      if (examLink && !/^https?:\\/\\//i.test(examLink)) {
+        throw new Error("The examination link in the sheet must begin with https:// or http://.");
+      }
+      return outputResponse_({success:true,slip:{
+        applicationId:applicationId,
+        studentName:get("Student Name"),
+        rollNumber:get("Roll Number"),
+        batch:get("Batch"),
+        testDate:get("Test Date"),
+        testTime:get("Test Time"),
+        totalMcqs:get("Total MCQs"),
+        totalMarks:get("Total Marks"),
+        examDuration:get("Exam Duration"),
+        examLink:examLink
+      }}, callback);
+    }
+    return outputResponse_({success:false,message:"No matching examination slip was found. Check your Application ID and registered email."}, callback);
   } catch(err) {
     return outputResponse_({success:false,message:String(err.message || err)}, callback);
   }
@@ -350,6 +411,23 @@ function setupILMResultsSheet() {
   let sheet = ss.getSheetByName("Student Results");
   if (!sheet) sheet = ss.insertSheet("Student Results");
   if (sheet.getLastRow() === 0) sheet.getRange(1,1,1,RESULT_HEADERS.length).setValues([RESULT_HEADERS]);
+}
+
+
+/** Run once to create the Examination Slips tab with the required columns. */
+function setupILMExaminationSlipsSheet() {
+  const ss = SpreadsheetApp.openById(ILM_SPREADSHEET_ID);
+  let sheet = ss.getSheetByName("Examination Slips");
+  if (!sheet) sheet = ss.insertSheet("Examination Slips");
+  if (sheet.getLastRow() === 0) {
+    sheet.getRange(1, 1, 1, EXAM_SLIP_HEADERS.length).setValues([EXAM_SLIP_HEADERS]);
+    sheet.setFrozenRows(1);
+  } else {
+    const existing = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getDisplayValues()[0].map(function(h){return String(h).trim();});
+    const missing = EXAM_SLIP_HEADERS.filter(function(h){return existing.indexOf(h) < 0;});
+    if (missing.length) sheet.getRange(1, sheet.getLastColumn() + 1, 1, missing.length).setValues([missing]);
+  }
+  Logger.log("Ready: " + sheet.getName() + " | " + ss.getUrl());
 }
 
 /**
