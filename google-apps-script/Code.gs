@@ -163,6 +163,10 @@ function doGet(e) {
   // Accept "callback" too, for compatibility with older website versions.
   const callback = String(params.prefix || params.callback || "").trim();
 
+  if (params.action === "registration-slip") {
+    return lookupRegistrationSlip_(params, callback);
+  }
+
   if (params.action === "health") {
     return ContentService.createTextOutput(JSON.stringify({
       success: true,
@@ -204,6 +208,48 @@ function doGet(e) {
     }
     return outputResponse_({success:true,results:results}, callback);
   } catch (err) {
+    return outputResponse_({success:false,message:String(err.message || err)}, callback);
+  }
+}
+
+
+/** Return only the fields needed to print a registration slip.
+ * Require both Application ID and the registered email to protect student data.
+ */
+function lookupRegistrationSlip_(params, callback) {
+  const applicationId = clean_(params.applicationId || "", 50).toUpperCase();
+  const email = clean_(params.email || "", 180).toLowerCase();
+  if (!applicationId || !email) {
+    return outputResponse_({success:false,message:"Enter your Application ID and registered email address."}, callback);
+  }
+  try {
+    const ss = SpreadsheetApp.openById(ILM_SPREADSHEET_ID);
+    const sheet = getRegistrationSheet_(ss);
+    if (sheet.getLastRow() < 2) return outputResponse_({success:false,message:"No registration was found."}, callback);
+    const rows = sheet.getDataRange().getDisplayValues();
+    const headers = rows[0].map(function(h){ return String(h).trim(); });
+    const idCol = headers.indexOf("Application ID");
+    const emailCol = headers.indexOf("Email");
+    if (idCol < 0 || emailCol < 0) throw new Error("Registration sheet is missing required columns.");
+    for (let i=1; i<rows.length; i++) {
+      if (String(rows[i][idCol]).trim().toUpperCase() !== applicationId) continue;
+      if (String(rows[i][emailCol]).trim().toLowerCase() !== email) break;
+      const get = function(name) { const j=headers.indexOf(name); return j<0 ? "" : rows[i][j]; };
+      return outputResponse_({success:true,slip:{
+        applicationId:applicationId,
+        applicationDate:get("Application Date"),
+        studentName:get("Student Full Name"),
+        fatherName:get("Father / Guardian Name"),
+        dateOfBirth:get("Date of Birth"),
+        school:get("School Name"),
+        className:get("Current Class"),
+        programme:get("Programme"),
+        area:get("Tehsil / Area"),
+        status:get("Application Status") || "Under Review"
+      }}, callback);
+    }
+    return outputResponse_({success:false,message:"No matching registration was found. Check your Application ID and registered email."}, callback);
+  } catch(err) {
     return outputResponse_({success:false,message:String(err.message || err)}, callback);
   }
 }
