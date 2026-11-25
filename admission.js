@@ -78,7 +78,7 @@ if(ilmForm) ilmForm.addEventListener("submit",async e=>{
   };
   // no-cors does not reveal the server response; the success message is deliberately qualified.
   await fetch(ILM_APPS_SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});
-  ilmShowFormMessage("Your application has been submitted. A confirmation email will be sent to your registered email address. Your application is under review. For assistance, contact ilmthecontestcenter@gmail.com.","success");
+  ilmShowFormMessage("Your application has been submitted. Check your registered email for your Application ID. Once you receive it, open the Registration Slip page to download or print your slip using that ID and the same email address. For assistance, contact ilmthecontestcenter@gmail.com.","success");
   ilmForm.reset();
  }catch(err){
   ilmShowFormMessage("We could not send your application. Check your connection and try again. "+(err.message||""),"error");
