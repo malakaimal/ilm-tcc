@@ -73,3 +73,20 @@ main .card:hover{transform:translateY(-8px);box-shadow:0 24px 48px rgba(7,27,53,
 .ilm-benefit strong,.ilm-benefit small{display:block}.ilm-benefit strong{color:#fff;font-size:13px}.ilm-benefit small{color:#d0e0f3;font-size:11px;margin-top:3px}
 @media(max-width:850px){.ilm-hero-main{grid-template-columns:1fr;gap:0}.ilm-hero-art{height:300px;max-width:560px;width:100%;margin:0 auto}.ilm-benefit-grid{grid-template-columns:repeat(2,1fr)}.ilm-home-hero{padding-top:55px!important}}
 @media(max-width:480px){.ilm-home-hero{padding:42px 0 25px!important}.ilm-hero-copy h1{font-size:48px}.ilm-hero-art{height:245px}.ilm-globe{width:220px}.ilm-books{height:100px}.ilm-cap{font-size:58px;top:-39px}.ilm-trophy{font-size:54px}.ilm-benefit-grid{grid-template-columns:1fr}.ilm-benefit{min-height:74px}}
+
+
+/* ILM moving announcement ticker */
+.ilm-news-strip{display:flex;align-items:stretch;min-height:54px;background:#092747;color:#fff;border-bottom:2px solid #c5a35d;overflow:hidden}
+.ilm-news-label{position:relative;z-index:2;display:flex;align-items:center;flex:0 0 auto;padding:0 24px;background:#c5a35d;color:#092747;font-size:12px;font-weight:850;letter-spacing:1.3px;white-space:nowrap}
+.ilm-news-window{display:flex;align-items:center;min-width:0;flex:1;overflow:hidden}
+.ilm-news-track{display:flex;align-items:center;width:max-content;animation:ilmAnnouncementScroll 32s linear infinite}
+.ilm-news-message{display:flex;align-items:center;gap:24px;padding:0 30px;white-space:nowrap;font-size:14px;font-weight:550}
+.ilm-news-live{padding:6px 10px;border:1px solid rgba(255,255,255,.42);border-radius:3px;color:#f0d38b;font-size:10px;font-weight:850;letter-spacing:1px}
+.ilm-news-deadline{color:#f0d38b;font-weight:800}
+.ilm-news-message a{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border:1px solid #d7b96e;border-radius:3px;color:#fff;text-decoration:none;font-size:12px;font-weight:750;transition:background .2s,color .2s}
+.ilm-news-message a:hover{background:#d7b96e;color:#092747}
+.ilm-news-separator{color:#d7b96e;font-size:17px}
+@keyframes ilmAnnouncementScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ilm-news-strip:hover .ilm-news-track{animation-play-state:paused}
+@media(max-width:600px){.ilm-news-strip{min-height:50px}.ilm-news-label{padding:0 12px;font-size:10px;letter-spacing:.7px}.ilm-news-message{gap:14px;padding:0 18px;font-size:12px}.ilm-news-live{font-size:9px;padding:5px 7px}.ilm-news-message a{font-size:11px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){.ilm-news-track{animation:none}}
