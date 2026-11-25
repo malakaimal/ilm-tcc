@@ -355,7 +355,8 @@ main>section:not(.page-hero){position:relative}
 
 /* ILM emblem logo */
 .brand{display:flex;align-items:center;flex:0 0 auto;line-height:1}
-.brand img{display:block;width:176px;height:72px;object-fit:contain}\n.footer-brand img{display:block;width:220px;max-width:100%;height:auto;max-height:110px;object-fit:contain}
+.brand img{display:block;width:176px;height:72px;object-fit:contain}
+.footer-brand img{display:block;width:220px;max-width:100%;height:auto;max-height:110px;object-fit:contain}
 .footer-brand>a{display:inline-block}
 .footer-brand>a img{display:block;width:166px;height:auto;max-height:150px;object-fit:contain;margin:0 0 12px}
 @media(max-width:900px){.brand img{width:150px;height:64px}}
@@ -1616,3 +1617,8 @@ blockquote{border-left:4px solid var(--ilm-gold);padding:12px 20px;background:#f
   font-size: inherit !important;
   letter-spacing: normal !important;
 }
+
+/* Reliable shared logo sizing */
+.site-header .brand img{display:block!important;width:190px!important;max-width:190px!important;height:auto!important;max-height:70px!important;object-fit:contain!important;visibility:visible!important;opacity:1!important}
+.site-footer .footer-brand>a{display:inline-block!important}
+.site-footer .footer-brand>a img{display:block!important;width:180px!important;max-width:100%!important;height:auto!important;max-height:110px!important;object-fit:contain!important;visibility:visible!important;opacity:1!important}
