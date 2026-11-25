@@ -79,8 +79,7 @@ const fields=[["Student Name",s.studentName],["Father / Guardian",s.fatherName],
 output.innerHTML='<article class="registration-paper" id="registrationSlip"><div class="registration-head"><div><div class="registration-kicker">Official Registration Confirmation</div><div class="registration-brand">ILM THE CONTEST CENTER</div><div>Shangla, Pakistan</div></div><div class="registration-id">Application ID<br>'+escapeText(s.applicationId)+'</div></div><div class="registration-grid">'+fields.map(f=>'<div class="registration-field"><small>'+escapeText(f[0])+'</small><strong>'+escapeText(f[1]||"Not provided")+'</strong></div>').join("")+'</div><div class="registration-foot">Keep this slip for your records. Application status and payment are subject to verification by ILM The Contest Center.<br>Contact: ilmthecontestcenter@gmail.com</div><div class="no-print" style="margin-top:20px"><button class="btn btn-blue" type="button" onclick="window.print()">Download / Print PDF</button></div></article>';
 }
 let requestNumber=0;
-window.ilmRegistrationSlipCallback=function(data,requestId){
-if(requestId!==requestNumber)return;
+window.ilmRegistrationSlipCallback=function(data){
 button.disabled=false;button.textContent="Find Registration Slip";
 if(!data||!data.success){showMessage(data&&data.message?data.message:"No matching registration was found. Check your Application ID and registered email.","error");return;}
 showMessage("Registration found. Your slip is ready.","success");renderRegistrationSlip(data.slip);
