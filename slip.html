@@ -68,8 +68,18 @@ output.innerHTML='<article class="exam-paper" id="examSlip"><div class="exam-pap
 }
 window.ilmExamSlipCallback=function(data){
 button.disabled=false;button.textContent="Find My Roll Number Slip";
-if(!data||!data.success){showMessage(data&&data.message?data.message:"No examination slip was found.","error");return;}
-showMessage("Examination slip found. Your roll number slip is ready.","success");renderSlip(data.slip);
+if(!data||data.success!==true){showMessage(data&&data.message?data.message:"No examination slip was found.","error");return;}
+if(!data.slip||typeof data.slip!=="object"){
+showMessage("The examination service confirmed a match but did not return slip details. Please contact ILM support; the website needs the latest Apps Script deployment.","error");return;
+}
+try{
+renderSlip(data.slip);
+if(!output.querySelector("#examSlip")) throw new Error("Slip could not be displayed.");
+showMessage("Examination slip found. Your roll number slip is ready.","success");
+}catch(err){
+output.replaceChildren();
+showMessage("Your slip data was received, but could not be displayed. Please contact ILM support. ("+String(err.message||err)+")","error");
+}
 };
 let request=0;
 form.addEventListener("submit",function(e){
