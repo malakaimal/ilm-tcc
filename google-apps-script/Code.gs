@@ -129,7 +129,7 @@ function sendAdmissionConfirmationEmail_(values) {
     '<tr><td style="padding:9px;border:1px solid #e5eaf1"><b>Class</b></td><td style="padding:9px;border:1px solid #e5eaf1">' + escapeHtml_(grade) + '</td></tr>',
     '<tr><td style="padding:9px;border:1px solid #e5eaf1"><b>Status</b></td><td style="padding:9px;border:1px solid #e5eaf1">Under Review</td></tr>',
     '</table>',
-    '<p>Please keep your Application ID for future communication. You can retrieve and print your registration slip at <a href="https://malakaimal.github.io/ilm-tcc/registration-slip.html">ILM Registration Slip Download</a> using your Application ID and registered email address.</p>',
+    '<p>Please keep your Application ID for future communication. You can retrieve and print your registration slip at <a href="https://malakaimal.github.io/ilm-tcc/slip.html">ILM Registration Slip Download</a> using your Application ID and registered email address.</p>',
     '<p>Regards,<br><b>Admissions Team</b><br>ILM The Contest Center<br>ilmthecontestcenter@gmail.com</p>',
     '</div></div>'
   ].join("");
