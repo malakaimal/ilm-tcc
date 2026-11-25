@@ -90,3 +90,12 @@ main .card:hover{transform:translateY(-8px);box-shadow:0 24px 48px rgba(7,27,53,
 .ilm-news-strip:hover .ilm-news-track{animation-play-state:paused}
 @media(max-width:600px){.ilm-news-strip{min-height:50px}.ilm-news-label{padding:0 12px;font-size:10px;letter-spacing:.7px}.ilm-news-message{gap:14px;padding:0 18px;font-size:12px}.ilm-news-live{font-size:9px;padding:5px 7px}.ilm-news-message a{font-size:11px;padding:6px 9px}}
 @media(prefers-reduced-motion:reduce){.ilm-news-track{animation:none}}
+
+
+/* Homepage announcement and social poster image reliability */
+.page-home .ilm-news-strip{position:relative;z-index:5}
+.page-home .ilm-news-track{display:flex!important;width:max-content!important;will-change:transform;animation:ilmAnnouncementScroll 32s linear infinite!important}
+.page-home .ilm-news-message{flex:0 0 auto}
+.page-home .ilm-social-card .ilm-post-image{display:block!important;width:100%;height:auto!important;aspect-ratio:1200/650!important;overflow:hidden!important;background:#edf4fb}
+.page-home .ilm-social-card .ilm-post-image img{display:block!important;width:100%!important;height:100%!important;min-height:180px;aspect-ratio:1200/650!important;object-fit:cover!important;visibility:visible!important;opacity:1!important}
+@media(max-width:540px){.page-home .ilm-social-card .ilm-post-image img{min-height:0}}
