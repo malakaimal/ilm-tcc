@@ -27,8 +27,7 @@ if (header) {
     {label:"Students Services",items:[
     ["Check Results","results.html"],
     ["Verify Certificate","certificates.html"],
-    ["Registration Slip","registration-slip.html"],
-    ["Examination Slip","slip.html"]]},
+    ["Download Slips","slip.html"]]},
     {label:"Contact",url:"contact.html"}
   ];
 
